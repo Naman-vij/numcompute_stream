@@ -4,29 +4,30 @@ import numpy as np
 from typing import Tuple, Optional
 
 class StreamingMean:
+    """Compute mean incrementally using Welford's algorithm."""
+    
     def __init__(self):
-        # compute mean incrementally using welford's algo
         self.mean = 0.0
         self.n = 0
-
+    
     def update(self, x: np.ndarray):
-        # update mean with new values
+        """Update mean with new value(s)."""
         if isinstance(x, (int, float)):
             x = np.array([x])
-
+        
         x = np.asarray(x).flatten()
         for val in x:
             if not np.isnan(val):
                 self.n += 1
                 delta = val - self.mean
                 self.mean += delta / self.n
-
-    def reset(self) -> float:
-        # return current mean 
+    
+    def result(self) -> float:
+        """Return current mean estimate."""
         return self.mean if self.n > 0 else 0.0
     
     def reset(self):
-        # reset to initial state
+        """Reset to initial state."""
         self.mean = 0.0
         self.n = 0
 
