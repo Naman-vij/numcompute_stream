@@ -7,7 +7,7 @@ built with NumPy and Matplotlib.
 
 from .stats import StreamingMean, StreamingVariance
 from .tree import DecisionTreeClassifier
-# from .ensemble import BaggingClassifier, RandomForestClassifier
+from .ensemble import BaggingClassifier, RandomForestClassifier
 from .preprocessing import StandardScaler, MinMaxScaler, SimpleImputer, OneHotEncoder
 from .metrics import accuracy, precision_score, recall_score, f1_score
 # from .pipeline import Pipeline
@@ -27,4 +27,6 @@ __all__ = [
     'MinMaxScaler',
     'SimpleImputer',
     'OneHotEncoder',
+    'BaggingClassifier',
+    'RandomForestClassifier',
 ]
