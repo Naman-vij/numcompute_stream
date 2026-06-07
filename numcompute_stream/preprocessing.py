@@ -10,60 +10,69 @@ from typing import Optional, List
 
 class StandardScaler:
     """
-    Standardize features: (X - mean) / std
+    Standardize features by removing mean and scaling to unit variance.
+    Supports streaming via partial_fit.
     
-    Why: Makes all features comparable regardless of original scale.
-    Example: Age (0-100) and Income (0-1000000) become comparable.
+    Tracks running mean and variance using Welford's algorithm.
     
-    Streaming: Updates mean/variance as new chunks arrive.
+    Example:
+        scaler = StandardScaler()
+        scaler.fit(X_train)
+        X_scaled = scaler.transform(X_test)
+        
+        Or streaming:
+        scaler = StandardScaler()
+        for X_chunk in chunks:
+            scaler.partial_fit(X_chunk)
+            X_scaled = scaler.transform(X_chunk)
     """
     
-    def __init__(self, with_mean: bool = True, with_std: bool = True):
-        self.with_mean = with_mean
-        self.with_std = with_std
-        
+    def __init__(self):
         self.mean = None
         self.var = None
+        self.M2 = None
         self.n_features_in = None
         self.n_samples_seen = 0
-        self.M2 = None
     
     def fit(self, X: np.ndarray) -> 'StandardScaler':
-        """Learn mean and variance from data (batch mode)."""
+        """Compute mean and variance."""
         X = np.asarray(X)
         if X.ndim == 1:
             X = X.reshape(-1, 1)
         
+        self.mean = np.mean(X, axis=0)
+        self.var = np.var(X, axis=0)
         self.n_features_in = X.shape[1]
-        self.mean = np.nanmean(X, axis=0)
-        self.var = np.nanvar(X, axis=0)
-        self.n_samples_seen = X.shape[0]
+        self.n_samples_seen = len(X)
         
         return self
     
     def partial_fit(self, X: np.ndarray) -> 'StandardScaler':
-        """Update mean and variance with new chunk (streaming mode)."""
+        """Update mean and variance with new batch (streaming)."""
         X = np.asarray(X)
+        
         if X.ndim == 1:
             X = X.reshape(-1, 1)
         
-        if self.n_features_in is None:
-            self.n_features_in = X.shape[1]
-            self.mean = np.zeros(self.n_features_in)
-            self.M2 = np.zeros(self.n_features_in)
+        n_samples, n_features = X.shape
+        
+        # Initialize on first call
+        if self.M2 is None:
+            self.n_features_in = n_features
+            self.mean = np.zeros(n_features, dtype=float)
+            self.M2 = np.zeros(n_features, dtype=float)
             self.n_samples_seen = 0
         
-        # Welford's algorithm: update mean and variance without storing all data
-        for i in range(X.shape[0]):
-            for j in range(self.n_features_in):
-                if not np.isnan(X[i, j]):
-                    self.n_samples_seen += 1
-                    delta = X[i, j] - self.mean[j]
-                    self.mean[j] += delta / self.n_samples_seen
-                    delta2 = X[i, j] - self.mean[j]
-                    self.M2[j] += delta * delta2
+        # Update using Welford's algorithm
+        for j in range(n_features):
+            for i in range(n_samples):
+                self.n_samples_seen += 1
+                delta = X[i, j] - self.mean[j]
+                self.mean[j] += delta / self.n_samples_seen
+                delta2 = X[i, j] - self.mean[j]
+                self.M2[j] += delta * delta2
         
-        # Calculate variance from M2
+        # Compute variance
         if self.n_samples_seen > 1:
             self.var = self.M2 / (self.n_samples_seen - 1)
         else:
@@ -72,26 +81,19 @@ class StandardScaler:
         return self
     
     def transform(self, X: np.ndarray) -> np.ndarray:
-        """Scale new data using learned mean and variance."""
+        """Standardize features."""
         X = np.asarray(X)
         if X.ndim == 1:
             X = X.reshape(-1, 1)
         
-        X_scaled = np.copy(X).astype(float)
+        if self.mean is None or self.var is None:
+            raise ValueError("Must fit before transform")
         
-        # Subtract mean
-        if self.with_mean:
-            X_scaled = X_scaled - self.mean
-        
-        # Divide by standard deviation
-        if self.with_std:
-            std = np.sqrt(np.maximum(self.var, 1e-10))
-            X_scaled = X_scaled / std
-        
-        return X_scaled
+        std = np.sqrt(self.var + 1e-8)
+        return (X - self.mean) / std
     
     def fit_transform(self, X: np.ndarray) -> np.ndarray:
-        """Fit and transform in one step."""
+        """Fit and transform."""
         return self.fit(X).transform(X)
 
 
