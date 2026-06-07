@@ -10,7 +10,7 @@ from .tree import DecisionTreeClassifier
 from .ensemble import BaggingClassifier, RandomForestClassifier
 from .preprocessing import StandardScaler, MinMaxScaler, SimpleImputer, OneHotEncoder
 from .metrics import accuracy, precision_score, recall_score, f1_score
-# from .pipeline import Pipeline
+from .pipeline import Pipeline
 # from .stream import StreamTrainer
 from . import visualise
 
@@ -30,4 +30,5 @@ __all__ = [
     'BaggingClassifier',
     'RandomForestClassifier',
     'visualise',
+    'Pipeline',
 ]
