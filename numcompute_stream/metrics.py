@@ -62,7 +62,10 @@ class StreamingConfusionMatrix(StreamingMetric):
     
     def __init__(self, n_classes: Optional[int] = None):
         self.n_classes = n_classes
-        self.matrix = None
+        if n_classes is not None:
+            self.matrix = np.zeros((n_classes, n_classes), dtype=int)
+        else:
+            self.matrix = None
     
     def update(self, y_true: np.ndarray, y_pred: np.ndarray):
         """Update confusion matrix."""

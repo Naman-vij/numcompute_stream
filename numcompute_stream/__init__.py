@@ -9,7 +9,7 @@ from .stats import StreamingMean, StreamingVariance
 from .tree import DecisionTreeClassifier
 # from .ensemble import BaggingClassifier, RandomForestClassifier
 # from .preprocessing import StandardScaler, MinMaxScaler, SimpleImputer, OneHotEncoder
-# from .metrics import accuracy, precision_score, recall_score, f1_score
+from .metrics import accuracy, precision_score, recall_score, f1_score
 # from .pipeline import Pipeline
 # from .stream import StreamTrainer
 # from . import visualise
@@ -18,5 +18,9 @@ from .tree import DecisionTreeClassifier
 __all__ = [
     'StreamingMean',
     'StreamingVariance',
-    'DecisionTreeClassifier'
+    'DecisionTreeClassifier',
+    'accuracy',
+    'precision_score',
+    'recall_score',
+    'f1_score',
 ]
