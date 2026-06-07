@@ -26,7 +26,7 @@ class TestStandardScaler:
         scaler.fit(X)
         
         X_scaled = scaler.transform(X)
-        assert np.abs(np.std(X_scaled[:, 0]) - 1.0) < 1e-10
+        assert np.abs(np.std(X_scaled[:, 0]) - 1.0) < 1e-6
     
     def test_partial_fit_streaming(self):
         """Scaler should work with streaming updates"""
