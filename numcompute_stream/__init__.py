@@ -13,6 +13,7 @@ from .metrics import accuracy, precision_score, recall_score, f1_score
 from .pipeline import Pipeline
 from .stream import StreamTrainer
 from . import visualise
+from . import io
 
 
 __all__ = [
@@ -31,5 +32,6 @@ __all__ = [
     'RandomForestClassifier',
     'visualise',
     'Pipeline',
-    'StreamTrainer'
+    'StreamTrainer',
+    'io'
 ]
