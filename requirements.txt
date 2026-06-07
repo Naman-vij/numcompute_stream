@@ -1,0 +1,7 @@
+numpy==1.26.4
+matplotlib==3.10.8
+pytest==9.0.3
+pytest-cov==7.1.0
+
+Use it for installation
+powershellpip install -r requirements.txt
