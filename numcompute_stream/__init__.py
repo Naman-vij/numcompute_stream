@@ -12,7 +12,7 @@ from .preprocessing import StandardScaler, MinMaxScaler, SimpleImputer, OneHotEn
 from .metrics import accuracy, precision_score, recall_score, f1_score
 # from .pipeline import Pipeline
 # from .stream import StreamTrainer
-# from . import visualise
+from . import visualise
 
 
 __all__ = [
@@ -29,4 +29,5 @@ __all__ = [
     'OneHotEncoder',
     'BaggingClassifier',
     'RandomForestClassifier',
+    'visualise',
 ]
