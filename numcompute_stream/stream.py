@@ -197,5 +197,11 @@ class StreamTrainer:
         print(f"Total training time: {stats['total_time']:.3f}s")
         print("\nCurrent Metrics:")
         for metric_name, value in stats['current_metrics'].items():
-            print(f"  {metric_name}: {value:.4f}")
+            if isinstance(value, np.ndarray):
+                print(f"  {metric_name}: (array shape {value.shape})")
+            else:
+                try:
+                    print(f"  {metric_name}: {float(value):.4f}")
+                except:
+                    print(f"  {metric_name}: {value}")
         print("="*60 + "\n")
